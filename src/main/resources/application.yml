@@ -1,0 +1,10 @@
+# docker compose
+spring:
+  docker:
+    compose:
+      lifecycle-management: start_only
+
+# actuator
+management:
+  endpoints.web.exposure.include: info, health, prometheus, beans, env, heapdump, monitoring, mappings
+  info.java.enabled: true
