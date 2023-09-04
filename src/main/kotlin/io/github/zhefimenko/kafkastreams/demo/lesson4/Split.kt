@@ -6,9 +6,8 @@ import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler
-import org.apache.kafka.streams.kstream.JoinWindows
-import org.apache.kafka.streams.kstream.ValueJoiner
-import java.time.Duration
+import org.apache.kafka.streams.kstream.Branched
+import org.apache.kafka.streams.kstream.Named
 import java.util.*
 
 /**
@@ -16,6 +15,11 @@ import java.util.*
  */
 
 private val log = KotlinLogging.logger {}
+
+private const val PREFIX = "LESSON4-PREFIX"
+private const val TARGET_TOPIC_1 = "lesson4_target_1"
+private const val TARGET_TOPIC_5 = "lesson4_target_5"
+private const val TARGET_TOPIC_DEFAULT = "lesson4_target_default"
 
 fun main() {
     val props = Properties()
@@ -28,18 +32,19 @@ fun main() {
 
     val builder = StreamsBuilder()
         .also {
-            val leftStream = it.stream<String, String>("lesson4_left_source")
-            val rightStream = it.stream<String, String>("lesson4_right_source")
-            val valueJoiner = ValueJoiner<String, String?, String> { leftValue, rightValue -> leftValue + rightValue }
+            it.stream<String, String>("lesson4_source")
 
-            leftStream
-                .leftJoin(
-                    rightStream,
-                    valueJoiner,
-                    JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(10))
-                )
-                .mapValues { value -> value.lowercase() }
-                .to("lesson4_target")
+                .split(Named.`as`(PREFIX))
+                .branch({ key, _ -> key == "1" }, Branched.`as`(TARGET_TOPIC_1))
+                .branch({ key, _ -> key == "5" }, Branched.`as`(TARGET_TOPIC_5))
+                .defaultBranch(Branched.`as`(TARGET_TOPIC_DEFAULT))
+
+                .forEach { (name, stream) ->
+                    run {
+                        val topicName = name.replaceFirst(PREFIX, "")
+                        stream.to(topicName)
+                    }
+                }
         }
 
     val streams = KafkaStreams(builder.build(), props).also {
