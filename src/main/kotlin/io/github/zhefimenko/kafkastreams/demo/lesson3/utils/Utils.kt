@@ -10,14 +10,14 @@ import org.apache.kafka.common.serialization.Serializer
  */
 
 class JsonSerializer<T>(
-        private val serializer: KSerializer<T>
+    private val serializer: KSerializer<T>
 ) : Serializer<T> {
 
     override fun serialize(topic: String, data: T): ByteArray = Json.encodeToString(serializer, data).toByteArray()
 }
 
 class JsonDeserializer<T>(
-        private val serializer: KSerializer<T>
+    private val serializer: KSerializer<T>
 ) : Deserializer<T> {
 
     override fun deserialize(topic: String, bytes: ByteArray): T = Json.decodeFromString(serializer, String(bytes))

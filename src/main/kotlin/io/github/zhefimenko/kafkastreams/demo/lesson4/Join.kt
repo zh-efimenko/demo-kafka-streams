@@ -19,29 +19,28 @@ private val log = KotlinLogging.logger {}
 
 fun main() {
     val props = Properties()
-            .also {
-                it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson4-group"
-                it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
-                it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-                it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-            }
+        .also {
+            it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson4-group"
+            it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
+            it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+            it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+        }
 
     val builder = StreamsBuilder()
-            .also {
-                val leftStream = it.stream<String, String>("lesson4_left_source")
-                val rightStream = it.stream<String, String>("lesson4_right_source")
-                val valueJoiner = ValueJoiner<String, String?, String> { leftValue, rightValue -> leftValue + rightValue }
+        .also {
+            val leftStream = it.stream<String, String>("lesson4_left_source")
+            val rightStream = it.stream<String, String>("lesson4_right_source")
+            val valueJoiner = ValueJoiner<String, String?, String> { leftValue, rightValue -> leftValue + rightValue }
 
-                leftStream
-                        .join(
-                                rightStream,
-                                valueJoiner,
-                                JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(10))
-                        )
-                        .peek { key, value -> System.err.println("key:$key, value:$value") }
-                        .mapValues { value -> value.lowercase() }
-                        .to("lesson4_target")
-            }
+            leftStream
+                .join(
+                    rightStream,
+                    valueJoiner,
+                    JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(10))
+                )
+                .mapValues { value -> value.lowercase() }
+                .to("lesson4_target")
+        }
 
     val streams = KafkaStreams(builder.build(), props).also {
         it.setUncaughtExceptionHandler { ex: Throwable ->

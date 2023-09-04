@@ -24,22 +24,21 @@ data class Value(val id: String, val name: String)
 
 fun main() {
     val props = Properties()
-            .also {
-                it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson3-group"
-                it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
-                it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-                it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-            }
+        .also {
+            it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson3-group"
+            it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
+            it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+            it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+        }
 
     val valueSerde = Serdes.serdeFrom(JsonSerializer(Value.serializer()), JsonDeserializer(Value.serializer()))
 
     val builder = StreamsBuilder()
-            .also {
-                it.stream("lesson3_source", Consumed.with(Serdes.String(), valueSerde))
-                        .peek { key, value -> System.err.println("key:$key, value:$value") }
-                        .mapValues { value -> value.copy(name = value.name.uppercase()) }
-                        .to("lesson3_target", Produced.valueSerde(valueSerde))
-            }
+        .also {
+            it.stream("lesson3_source", Consumed.with(Serdes.String(), valueSerde))
+                .mapValues { value -> value.copy(name = value.name.uppercase()) }
+                .to("lesson3_target", Produced.valueSerde(valueSerde))
+        }
 
     val streams = KafkaStreams(builder.build(), props).also {
         it.setUncaughtExceptionHandler { ex: Throwable ->

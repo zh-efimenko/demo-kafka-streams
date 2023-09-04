@@ -18,23 +18,23 @@ private val log = KotlinLogging.logger {}
 
 fun main() {
     val props = Properties()
-            .also {
-                it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson5-group"
-                it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
-                it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-                it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-                it[StreamsConfig.COMMIT_INTERVAL_MS_CONFIG] = 5000
-            }
+        .also {
+            it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson5-group"
+            it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
+            it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+            it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+            it[StreamsConfig.COMMIT_INTERVAL_MS_CONFIG] = 5000
+        }
 
     val builder = StreamsBuilder()
-            .also {
-                it.stream<String, String>("lesson5_source")
-                        .groupByKey()
-                        .count(Materialized.`as`("lesson5_store"))
-                        .toStream()
-                        .mapValues { value -> value.toString() }
-                        .to("lesson5_target")
-            }
+        .also {
+            it.stream<String, String>("lesson5_source")
+                .groupByKey()
+                .count(Materialized.`as`("lesson5_store"))
+                .toStream()
+                .mapValues { value -> value.toString() }
+                .to("lesson5_target")
+        }
 
     val streams = KafkaStreams(builder.build(), props).also {
         it.setUncaughtExceptionHandler { ex: Throwable ->

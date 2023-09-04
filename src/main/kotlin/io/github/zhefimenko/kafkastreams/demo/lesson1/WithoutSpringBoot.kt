@@ -16,20 +16,19 @@ private val log = KotlinLogging.logger {}
 
 fun main() {
     val props = Properties()
-            .also {
-                it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson1-group"
-                it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
-                it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-                it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-            }
+        .also {
+            it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson1-group"
+            it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
+            it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+            it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+        }
 
     val builder = StreamsBuilder()
-            .also {
-                it.stream<String, String>("lesson1_source")
-                        .peek { key, value -> System.err.println("key:$key, value:$value") }
-                        .mapValues { value -> value.lowercase() }
-                        .to("lesson1_target")
-            }
+        .also {
+            it.stream<String, String>("lesson1_source")
+                .mapValues { value -> value.lowercase() }
+                .to("lesson1_target")
+        }
 
     val streams = KafkaStreams(builder.build(), props).also {
         it.setUncaughtExceptionHandler { ex: Throwable ->
