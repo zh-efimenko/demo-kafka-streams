@@ -34,6 +34,7 @@ services:
   ksqldb-server:
     image: confluentinc/cp-ksqldb-server:7.2.1
     hostname: ksqldb-server
+    container_name: ksqldb
     depends_on:
       - kafka
     environment:

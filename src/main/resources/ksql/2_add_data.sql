@@ -1,0 +1,10 @@
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-1', 'wheel', 45);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-2', 'motor', 41);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-1', 'wheel', 42);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-3', 'muffler', 42);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-3', 'muffler', 40);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-4', 'motor', 43);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-6', 'muffler', 43);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-5', 'wheel', 41);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-5', 'wheel', 42);
+INSERT INTO readings (sensor, location, reading) VALUES ('sensor-4', 'motor', 41);
