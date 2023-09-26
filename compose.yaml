@@ -4,7 +4,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.2.1
     hostname: zookeeper
-    container_name: zookeeper
+    container_name: demo_zookeeper
     restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -15,7 +15,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.2.1
     hostname: kafka
-    container_name: kafka
+    container_name: demo_kafka
     restart: unless-stopped
     depends_on:
       - zookeeper
@@ -31,10 +31,21 @@ services:
     ports:
       - "9092:9092"
 
+  init-kafka:
+    image: confluentinc/cp-kafka:7.2.1
+    container_name: demo_init_kafka
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    volumes:
+      - ./etc/docker/kafka/init-kafka-topics.sh:/init-kafka-topics.sh
+    command: /init-kafka-topics.sh
+
+
   ksqldb-server:
     image: confluentinc/cp-ksqldb-server:7.2.1
     hostname: ksqldb-server
-    container_name: ksqldb
+    container_name: demo_ksqldb
     depends_on:
       - kafka
     environment:
@@ -46,7 +57,7 @@ services:
 
   ksqldb-cli:
     image: confluentinc/cp-ksqldb-cli:7.2.1
-    container_name: ksqldb-cli
+    container_name: demo_ksqldb-cli
     depends_on:
       - kafka
       - ksqldb-server
