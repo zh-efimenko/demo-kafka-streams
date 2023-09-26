@@ -29,7 +29,7 @@ kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --property "print.key=t
 ### CLI
 
 ```bash
-docker exec -it ksqldb-cli ksql http://ksqldb-server:8088
+docker exec -it demo_ksqldb-cli ksql http://ksqldb-server:8088
 ```
 
 ### Commands of KsqlDB
