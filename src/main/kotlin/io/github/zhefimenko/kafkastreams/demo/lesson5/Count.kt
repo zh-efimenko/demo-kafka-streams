@@ -7,7 +7,6 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler
 import org.apache.kafka.streams.kstream.Materialized
-import org.apache.kafka.streams.kstream.Produced
 import java.util.*
 
 /**
@@ -23,7 +22,7 @@ fun main() {
             it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
             it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
             it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
-            it[StreamsConfig.COMMIT_INTERVAL_MS_CONFIG] = 5000
+            it[StreamsConfig.COMMIT_INTERVAL_MS_CONFIG] = 10000
         }
 
     val builder = StreamsBuilder()

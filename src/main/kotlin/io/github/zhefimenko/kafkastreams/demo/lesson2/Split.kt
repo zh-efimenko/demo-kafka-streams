@@ -1,4 +1,4 @@
-package io.github.zhefimenko.kafkastreams.demo.lesson4
+package io.github.zhefimenko.kafkastreams.demo.lesson2
 
 import mu.KotlinLogging
 import org.apache.kafka.common.serialization.Serdes
@@ -16,15 +16,15 @@ import java.util.*
 
 private val log = KotlinLogging.logger {}
 
-private const val PREFIX = "LESSON4-PREFIX"
-private const val TARGET_TOPIC_1 = "lesson4_target_1"
-private const val TARGET_TOPIC_5 = "lesson4_target_5"
-private const val TARGET_TOPIC_DEFAULT = "lesson4_target_default"
+private const val PREFIX = "LESSON2-PREFIX"
+private const val TARGET_TOPIC_1 = "lesson2_target_1"
+private const val TARGET_TOPIC_5 = "lesson2_target_5"
+private const val TARGET_TOPIC_DEFAULT = "lesson2_target_default"
 
 fun main() {
     val props = Properties()
         .also {
-            it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson4-group"
+            it[StreamsConfig.APPLICATION_ID_CONFIG] = "lesson2-group"
             it[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
             it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
             it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
@@ -32,7 +32,7 @@ fun main() {
 
     val builder = StreamsBuilder()
         .also {
-            it.stream<String, String>("lesson4_source")
+            it.stream<String, String>("lesson2_source")
 
                 .split(Named.`as`(PREFIX))
                 .branch({ key, _ -> key == "1" }, Branched.`as`(TARGET_TOPIC_1))

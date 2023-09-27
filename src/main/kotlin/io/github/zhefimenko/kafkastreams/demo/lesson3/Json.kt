@@ -20,7 +20,7 @@ import java.util.*
 private val log = KotlinLogging.logger {}
 
 @Serializable
-data class Value(val id: String, val name: String)
+data class User(val id: String, val name: String)
 
 fun main() {
     val props = Properties()
@@ -31,13 +31,13 @@ fun main() {
             it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
         }
 
-    val valueSerde = Serdes.serdeFrom(JsonSerializer(Value.serializer()), JsonDeserializer(Value.serializer()))
+    val userSerde = Serdes.serdeFrom(JsonSerializer(User.serializer()), JsonDeserializer(User.serializer()))
 
     val builder = StreamsBuilder()
         .also {
-            it.stream("lesson3_source", Consumed.with(Serdes.String(), valueSerde))
-                .mapValues { value -> value.copy(name = value.name.uppercase()) }
-                .to("lesson3_target", Produced.valueSerde(valueSerde))
+            it.stream("lesson3_source", Consumed.with(Serdes.String(), userSerde))
+                .mapValues { user -> user.copy(name = user.name.uppercase()) }
+                .to("lesson3_target", Produced.valueSerde(userSerde))
         }
 
     val streams = KafkaStreams(builder.build(), props).also {
