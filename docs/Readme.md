@@ -202,3 +202,7 @@ Sliding Window особенно полезно, когда нам нужно с�
 в реальном времени с более гибкими временными интервалами.
 
 <img src="./images/sliding-windows.png" width="400" alt="join">
+
+## Presentation
+
+<a href="https://github.com/zh-efimenko/demo-kafka-streams/blob/main/docs/kafka Stream.pptx" title="Presentation" download>Presentation</a>
