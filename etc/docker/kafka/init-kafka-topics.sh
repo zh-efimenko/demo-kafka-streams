@@ -22,6 +22,7 @@ topics=(
   lesson4_target
 
   lesson4_orders_source
+  lesson4_users_source
   lesson4_users_target
 
   lesson5_source
